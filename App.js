@@ -1,17 +1,40 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Provider } from 'react-redux';
+import { StyleSheet, Text, View, AsyncStorage } from 'react-native';
+import store from './redux/store';
+import Login from './components/Login';
 
-export default class App extends React.Component {
+class App extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      session: undefined
+    }
+  }
+
+  componentDidMount() {
+    AsyncStorage.getItem('userSession', (err, data) => {
+      this.setState({session: JSON.parse(data) });
+    });
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
+      <Provider store={store}>
+        {this.state.session ? (
+          <View style={lcss.container}>
+            <Text>Test</Text>
+          </View>
+        ) : (
+          <Login />
+        )}
+      </Provider>
     );
   }
 }
 
-const styles = StyleSheet.create({
+const lcss = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -19,3 +42,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default App;
